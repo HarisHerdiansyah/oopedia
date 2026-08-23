@@ -1,25 +1,12 @@
-import java.security.SecureRandom;
-
 public class Customer {
-    private final SecureRandom RANDOM = new SecureRandom();
     private final String customerId;
     private String name;
     private double balance;
 
     public Customer(String name, double balance) {
-        this.customerId = generateId();
+        this.customerId = IdGenerator.generateId();
         this.name = name;
         this.balance = balance;
-    }
-
-    private String generateId() {
-        StringBuilder sb = new StringBuilder(6);
-        for (int i = 0; i < 6; i++) {
-            String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            int randomIndex = RANDOM.nextInt(CHARACTERS.length());
-            sb.append(CHARACTERS.charAt(randomIndex));
-        }
-        return sb.toString();
     }
 
     public String getCustomerId() {

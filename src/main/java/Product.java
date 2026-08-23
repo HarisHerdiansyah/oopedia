@@ -1,7 +1,4 @@
-import java.security.SecureRandom;
-
-public class Product {
-    private final SecureRandom RANDOM = new SecureRandom();
+public abstract class Product {
     private final String productId;
     private String productName;
     private String category;
@@ -9,26 +6,14 @@ public class Product {
     private int stock;
 
     public Product(String productName, String category, double basePrice, int stock) {
-        this.productId = generateId();
+        this.productId = IdGenerator.generateId();
         this.productName = productName;
         this.category = category;
         this.basePrice = basePrice;
         this.stock = stock;
     }
 
-    private String generateId() {
-        StringBuilder sb = new StringBuilder(6);
-        for (int i = 0; i < 6; i++) {
-            String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            int randomIndex = RANDOM.nextInt(CHARACTERS.length());
-            sb.append(CHARACTERS.charAt(randomIndex));
-        }
-        return sb.toString();
-    }
-
-    public double getActualPrice() {
-        return basePrice;
-    }
+    public abstract double getActualPrice();
 
     public String getProductId() {
         return productId;
