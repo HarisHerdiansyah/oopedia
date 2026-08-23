@@ -2,10 +2,13 @@ import java.util.Scanner;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
-    private static final Product[] products = new Product[20];
-    private static int lastProductIndex = 0;
+    private static final PhysicalProduct[] physicalProducts = new PhysicalProduct[20];
+    private static int lastPhysicalProductIndex = 0;
+    private static final DigitalProduct[] digitalProducts = new DigitalProduct[20];
+    private static int lastDigitalProductIndex = 0;
     private static final Customer[] customers = new Customer[20];
     private static int lastCustomerIndex = 0;
+    private static Customer verifiedCustomer;
 
     // -------------- Option 1 Section --------------
     private static boolean verifyAdmin() {
@@ -22,23 +25,106 @@ public class Main {
         return true;
     }
 
+    private static void managePhysicalProducts(Product baseProductData) {
+        System.out.print("Weight in Kg: ");
+        double weightInKg = Double.parseDouble(scanner.nextLine());
+        if (weightInKg <= 0) {
+            System.out.println("Product weight must be greater than or equal to zero!");
+            return;
+        }
+
+        System.out.print("Weight Cost per Kg (Input 1.0 if there is no cost): ");
+        double weightCostPerKg = Double.parseDouble(scanner.nextLine());
+        if (weightCostPerKg < 1.0) {
+            System.out.println("Weight cost of product must be greater than or equal to IDR 1!");
+            return;
+        }
+
+        String productName = baseProductData.getProductName();
+        String category = baseProductData.getCategory();
+        double basePrice = baseProductData.getBasePrice();
+        int stock = baseProductData.getStock();
+
+        PhysicalProduct physicalProduct = new PhysicalProduct(productName, category, basePrice, stock);
+        physicalProduct.setWeightInKg(weightInKg);
+        physicalProduct.setWeightCostPerKg(weightCostPerKg);
+
+        System.out.println("\nProduct created!");
+        System.out.println(physicalProduct);
+
+        physicalProducts[lastPhysicalProductIndex] = physicalProduct;
+        lastPhysicalProductIndex += 1;
+    }
+
+    private static void manageDigitalProducts(Product baseProductData) {
+        System.out.print("Download URL: ");
+        String downloadUrl = scanner.nextLine();
+        if (!downloadUrl.contains("http")) {
+            System.out.println("Download URL must be valid URL!");
+            return;
+        }
+
+        System.out.print("Size in MB: ");
+        double sizeInMb = Double.parseDouble(scanner.nextLine());
+        if (sizeInMb < 10.0) {
+            System.out.println("Size in megabytes must be greater than or equal to 10 MB!");
+            return;
+        }
+
+        System.out.print("Platform fee (Input 1.0 if there is no fee): ");
+        double platformFee = Double.parseDouble(scanner.nextLine());
+        if (platformFee < 1.0) {
+            System.out.println("Platform fee must be greater than or equal to IDR 1!");
+            return;
+        }
+
+        String productName = baseProductData.getProductName();
+        String category = baseProductData.getCategory();
+        double basePrice = baseProductData.getBasePrice();
+        int stock = baseProductData.getStock();
+
+        DigitalProduct digitalProduct = new DigitalProduct(productName, category, basePrice, stock);
+        digitalProduct.setDownloadUrl(downloadUrl);
+        digitalProduct.setSizeInMb(sizeInMb);
+        digitalProduct.setPlatformFee(platformFee);
+
+        System.out.println("\nProduct created!");
+        System.out.println(digitalProduct);
+
+        digitalProducts[lastDigitalProductIndex] = digitalProduct;
+        lastDigitalProductIndex += 1;
+    }
+
     private static void manageProducts() {
         System.out.println("\nInsert product information");
         System.out.print("Product name: ");
         String productName = scanner.nextLine();
-        System.out.print("Category: "); // ELECTRONIC, FASHION, SOFTWARE, EBOOK
+
+        System.out.println("Category"); // ELECTRONIC, FASHION, SOFTWARE, EBOOK
+        System.out.print("(1. ELECTRONIC, 2. FASHION. 3. SOFTWARE, 4. EBOOK): ");
         String category = scanner.nextLine().toUpperCase();
+
         System.out.print("Base price (IDR): ");
         double basePrice = Double.parseDouble(scanner.nextLine());
+        if (basePrice < 10000.0) {
+            System.out.println("Product price must be greater than or equal to IDR 10000.0!");
+            return;
+        }
+
         System.out.print("Initial stock: ");
         int stock = Integer.parseInt(scanner.nextLine());
+        if (stock < 0) {
+            System.out.println("Product initial stock can't be negative!");
+            return;
+        }
 
         Product product = new Product(productName, category, basePrice, stock);
-        System.out.println("\nProduct created!");
-        System.out.println(product);
-
-        products[lastProductIndex] = product;
-        lastProductIndex += 1;
+        boolean isPhysicalProduct = category.equalsIgnoreCase("1") || category.equalsIgnoreCase("2");
+        if (isPhysicalProduct) {
+            managePhysicalProducts(product);
+            return;
+        }
+        manageDigitalProducts(product);
     }
     // -------------- Option 1 Section --------------
 
@@ -46,6 +132,7 @@ public class Main {
     private static Customer findCustomer(String customerId) {
         if (lastCustomerIndex == 0) return null;
         for (Customer customer: customers) {
+            if (customer == null) break;
             if (customer.getCustomerId().equals(customerId)) {
                 return customer;
             }
@@ -65,20 +152,74 @@ public class Main {
         }
 
         System.out.println("You're verified");
+        verifiedCustomer = customer;
         return true;
     }
 
-    private static void createOrder() {}
+    private static PhysicalProduct findPhysicalProduct(String productId) {
+        if (lastPhysicalProductIndex == 0) return null;
+        for (PhysicalProduct product: physicalProducts) {
+            if (product == null) break;
+            if (product.getProductId().equals(productId)) {
+                return product;
+            }
+        }
+        return null;
+    }
+
+    private static DigitalProduct findDigitalProduct(String productId) {
+        if (lastDigitalProductIndex == 0) return null;
+        for (DigitalProduct product: digitalProducts) {
+            if (product == null) break;
+            if (product.getProductId().equals(productId)) {
+                return product;
+            }
+        }
+        return null;
+    }
+
+    private static void createOrder() {
+        System.out.println("Create your order!");
+        System.out.print("\nProduct ID: ");
+        String productId = scanner.nextLine();
+
+        PhysicalProduct physicalProduct = findPhysicalProduct(productId);
+        DigitalProduct digitalProduct = findDigitalProduct(productId);
+        if (physicalProduct == null && digitalProduct == null) {
+            System.out.println("Product not found!");
+            return;
+        }
+
+        System.out.print("Quantity: ");
+        int quantity = Integer.parseInt(scanner.nextLine());
+        if (quantity <= 0) {
+            System.out.println("Quantity must be equal or greater than 1");
+            return;
+        }
+
+        System.out.println("Order created!");
+        if (physicalProduct != null) {
+            System.out.printf("%s (%dx), IDR %.2f\n",
+                    physicalProduct.getProductName(), quantity, physicalProduct.getActualPrice());
+            return;
+        }
+        System.out.printf("%s (%dx), IDR %.2f\n",
+                digitalProduct.getProductName(), quantity, digitalProduct.getActualPrice());
+    }
     // -------------- Option 2 Section --------------
 
     // -------------- Option 3 Section --------------
     private static void browseCatalog() {
         System.out.println("\nCatalog:");
-        if (lastProductIndex == 0) {
+        if (lastPhysicalProductIndex == 0 && lastDigitalProductIndex == 0) {
             System.out.println("<product empty>");
             return;
         }
-        for (Product product: products) {
+        for (PhysicalProduct product: physicalProducts) {
+            if (product == null) break;
+            System.out.println(product);
+        }
+        for (DigitalProduct product: digitalProducts) {
             if (product == null) break;
             System.out.println(product);
         }
@@ -124,6 +265,7 @@ public class Main {
         // -------------- Mock Customer Data --------------
         Customer customer = new Customer("John Doe", 200000);
         customers[lastCustomerIndex] = customer;
+        lastCustomerIndex += 1;
         System.out.println("Customer mock credential: " + customer.getCustomerId());
         // -------------- Mock Customer Data --------------
 
