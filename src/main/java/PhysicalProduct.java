@@ -12,11 +12,6 @@ public class PhysicalProduct extends Product {
         this.weightCostPerKg = weightCostPerKg;
     }
 
-    @Override
-    public double getActualPrice() {
-        return super.getBasePrice() + (this.weightInKg * this.weightCostPerKg);
-    }
-
     public double getWeightInKg() {
         return weightInKg;
     }

@@ -14,11 +14,6 @@ public class DigitalProduct extends Product {
         this.platformFee = platformFee;
     }
 
-    @Override
-    public double getActualPrice() {
-        return super.getBasePrice() + this.platformFee;
-    }
-
     public String getDownloadUrl() {
         return downloadUrl;
     }

@@ -199,12 +199,14 @@ public class Main {
 
         System.out.println("Order created!");
         if (physicalProduct != null) {
+            double priceAfterMultiplier = physicalProduct.getBasePrice() + (physicalProduct.getWeightInKg() * physicalProduct.getWeightCostPerKg());
             System.out.printf("%s (%dx), IDR %.2f\n",
-                    physicalProduct.getProductName(), quantity, physicalProduct.getActualPrice());
+                    physicalProduct.getProductName(), quantity, priceAfterMultiplier);
             return;
         }
+        double priceAfterMultiplier = digitalProduct.getBasePrice() + digitalProduct.getPlatformFee();
         System.out.printf("%s (%dx), IDR %.2f\n",
-                digitalProduct.getProductName(), quantity, digitalProduct.getActualPrice());
+                digitalProduct.getProductName(), quantity, priceAfterMultiplier);
     }
     // -------------- Option 2 Section --------------
 

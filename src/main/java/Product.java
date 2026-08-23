@@ -26,10 +26,6 @@ public class Product {
         return sb.toString();
     }
 
-    public double getActualPrice() {
-        return basePrice;
-    }
-
     public String getProductId() {
         return productId;
     }
