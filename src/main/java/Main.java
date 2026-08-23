@@ -4,15 +4,14 @@ import java.util.Scanner;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
-    private static final Customer[] customers = new Customer[20];
-    private static int lastCustomerIndex = 0;
     private static Customer verifiedCustomer;
     private static final ProductService productService = new ProductService();
     private static final OrderService orderService = new OrderService();
+    private static final CustomerService customerService = new CustomerService();
 
     // -------------- Option 1 Section --------------
     private static boolean verifyAdmin() {
-        System.out.println("Verify if you're and admin!");
+        System.out.println("Verify if you're an admin!");
         System.out.print("Credential: ");
         String credential = scanner.nextLine();
 
@@ -125,23 +124,12 @@ public class Main {
     // -------------- Option 1 Section --------------
 
     // -------------- Option 2 Section --------------
-    private static Customer findCustomer(String customerId) {
-        if (lastCustomerIndex == 0) return null;
-        for (Customer customer: customers) {
-            if (customer == null) break;
-            if (customer.getCustomerId().equals(customerId)) {
-                return customer;
-            }
-        }
-        return null;
-    }
-
     private static boolean verifyCustomer() {
         System.out.println("Verify if you valid customer!");
         System.out.print("Customer ID: ");
         String customerId = scanner.nextLine();
 
-        Customer customer = findCustomer(customerId);
+        Customer customer = customerService.findById(customerId);
         if (customer == null) {
             System.out.println("You're not allowed to create an order!");
             return false;
@@ -272,6 +260,7 @@ public class Main {
             System.out.println(order);
         }
     }
+    // -------------- Option 6 Section --------------
 
     private static void manageOrder() {
         System.out.println("Manager order");
@@ -346,8 +335,7 @@ public class Main {
     public static void main(String[] args) {
         // -------------- Mock Customer Data --------------
         Customer customer = new Customer("John Doe", 200000);
-        customers[lastCustomerIndex] = customer;
-        lastCustomerIndex += 1;
+        customerService.save(customer);
         System.out.println("Customer mock credential: " + customer.getCustomerId());
         // -------------- Mock Customer Data --------------
 
