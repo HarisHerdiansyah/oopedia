@@ -328,16 +328,25 @@ public class Main {
 
     // -------------- Main Menu Section --------------
     private static void forwarder(int choice) {
-        if (choice == 1) {
-            if (!verifyAdmin()) return;
-            manageProducts();
-        } else if (choice == 2) {
-            if (!verifyCustomer()) return;
-            createOrder();
-        } else if (choice == 3) {
-            browseCatalog();
-        } else {
-            trackOrder();
+        switch (choice) {
+            case 1 -> {
+                if (!verifyAdmin()) return;
+                manageProducts();
+            }
+            case 2 -> {
+                if (!verifyCustomer()) return;
+                createOrder();
+            }
+            case 3 -> browseCatalog();
+            case 4 -> trackOrder();
+            case 5 -> {
+                if (!verifyCustomer()) return;
+                payOrder();
+            }
+            case 6 -> {
+                if (!verifyAdmin()) return;
+                manageOrder();
+            }
         }
     }
 
