@@ -1,14 +1,14 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
-    private static final Product[] products = new Product[20];
-    private static int lastProductIndex = 0;
     private static final Customer[] customers = new Customer[20];
     private static int lastCustomerIndex = 0;
     private static Customer verifiedCustomer;
-    private static final Order[] orders = new Order[20];
-    private static int lastOrderIndex = 0;
+    private static final ProductService productService = new ProductService();
+    private static final OrderService orderService = new OrderService();
 
     // -------------- Option 1 Section --------------
     private static boolean verifyAdmin() {
@@ -42,9 +42,7 @@ public class Main {
 
         physicalProduct.setWeightInKg(weightInKg);
         physicalProduct.setWeightCostPerKg(weightCostPerKg);
-
-        products[lastProductIndex] = physicalProduct;
-        lastProductIndex += 1;
+        productService.save(physicalProduct);
 
         System.out.println("\nProduct created!");
         System.out.println(physicalProduct);
@@ -75,9 +73,7 @@ public class Main {
         digitalProduct.setDownloadUrl(downloadUrl);
         digitalProduct.setSizeInMb(sizeInMb);
         digitalProduct.setPlatformFee(platformFee);
-
-        products[lastProductIndex] = digitalProduct;
-        lastProductIndex += 1;
+        productService.save(digitalProduct);
 
         System.out.println("\nProduct created!");
         System.out.println(digitalProduct);
@@ -156,17 +152,6 @@ public class Main {
         return true;
     }
 
-    private static Product findProduct(String productId) {
-        if (lastProductIndex == 0) return null;
-        for (Product product: products) {
-            if (product == null) break;
-            if (product.getProductId().equals(productId)) {
-                return product;
-            }
-        }
-        return null;
-    }
-
     private static void createOrder() {
         OrderItem[] orderItems = new OrderItem[20];
         int lastItemIndex = 0;
@@ -176,7 +161,7 @@ public class Main {
             System.out.print("\nProduct ID: ");
             String productId = scanner.nextLine();
 
-            Product product = findProduct(productId);
+            Product product = productService.findById(productId);
             if (product == null) {
                 System.out.println("Product not found!");
                 return;
@@ -204,8 +189,7 @@ public class Main {
         }
 
         Order order = new Order(verifiedCustomer, orderItems);
-        orders[lastOrderIndex] = order;
-        lastOrderIndex += 1;
+        orderService.save(order);
 
         System.out.println("Order created! Your order ID: " + order.getOrderId());
         for (OrderItem orderItem: orderItems) {
@@ -217,36 +201,26 @@ public class Main {
 
     // -------------- Option 3 Section --------------
     private static void browseCatalog() {
+        List<Product> productList = productService.findAll();
+
         System.out.println("\nCatalog:");
-        if (lastProductIndex == 0) {
+        if (productList.isEmpty()) {
             System.out.println("<product empty>");
             return;
         }
-        for (Product product: products) {
-            if (product == null) break;
+        for (Product product: productList) {
             System.out.println(product);
         }
     }
     // -------------- Option 3 Section --------------
 
     // -------------- Option 4 Section --------------
-    private static Order findOrder(String orderId) {
-        if (lastOrderIndex == 0) return null;
-        for (Order order: orders) {
-            if (order == null) break;
-            if (order.getOrderId().equals(orderId)) {
-                return order;
-            }
-        }
-        return null;
-    }
-
     private static void trackOrder() {
         System.out.println("Track your order!");
         System.out.print("Order ID: ");
         String orderId = scanner.nextLine();
 
-        Order order = findOrder(orderId);
+        Order order = orderService.findById(orderId);
         if (order == null) {
             System.out.println("Order not found!");
             return;
@@ -263,7 +237,7 @@ public class Main {
         System.out.print("Your order ID: ");
         String orderId = scanner.nextLine();
 
-        Order order = findOrder(orderId);
+        Order order = orderService.findById(orderId);
         if (order == null) {
             System.out.println("Order not found!");
             return;
@@ -287,13 +261,14 @@ public class Main {
 
     // -------------- Option 6 Section --------------
     private static void browseOrder() {
+        List<Order> orderList = orderService.findAll();
+
         System.out.println("\nOrder list:");
-        if (lastOrderIndex == 0) {
+        if (orderList.isEmpty()) {
             System.out.println("<order empty>");
             return;
         }
-        for (Order order: orders) {
-            if (order == null) break;
+        for (Order order: orderList) {
             System.out.println(order);
         }
     }
@@ -307,7 +282,7 @@ public class Main {
         System.out.print("Current status (1. ON_DELIVERY, 2. ARRIVED, 3. CANCELLED): ");
         String currentStatus = scanner.nextLine();
 
-        Order order = findOrder(orderId);
+        Order order = orderService.findById(orderId);
         if (order == null) {
             System.out.println("Order not found or wrong ID!");
             return;
@@ -378,12 +353,9 @@ public class Main {
 
         // -------------- Mock Product Data --------------
         PhysicalProduct product1 = new PhysicalProduct("Laptop", "ELECTRONIC", 4800000.0, 10, 1.6, 9000.0);
-        products[lastProductIndex] = product1;
-        lastProductIndex += 1;
-
         DigitalProduct product2 = new DigitalProduct("Windows 11", "SOFTWARE", 4800000.0, 10, "http://example.com", 4096, 9000.0);
-        products[lastProductIndex] = product2;
-        lastProductIndex += 1;
+        productService.save(product1);
+        productService.save(product2);
         // -------------- Mock Product Data --------------
 
         int choice;
