@@ -3,11 +3,11 @@ public class DigitalProduct extends Product {
     private double sizeInMb;
     private double platformFee;
 
-    public DigitalProduct(String productName, String category, double basePrice, int stock) {
+    public DigitalProduct(String productName, ProductCategory category, double basePrice, int stock) {
         super(productName, category, basePrice, stock);
     }
 
-    public DigitalProduct(String productName, String category, double basePrice, int stock, String downloadUrl, double sizeInMb, double platformFee) {
+    public DigitalProduct(String productName, ProductCategory category, double basePrice, int stock, String downloadUrl, double sizeInMb, double platformFee) {
         super(productName, category, basePrice, stock);
         this.downloadUrl = downloadUrl;
         this.sizeInMb = sizeInMb;

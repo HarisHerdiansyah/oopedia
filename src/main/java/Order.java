@@ -1,18 +1,18 @@
-import java.util.Arrays;
+import java.util.List;
 
 public class Order {
     private final String orderId;
     private Customer customer;
-    private OrderItem[] orderItems;
+    private List<OrderItem> orderItems;
     private double grandTotal;
-    private String orderStatus; // WAIT_FOR_PAYMENT, PROCESSING, ON_DELIVERY, ARRIVED, CANCELLED
+    private OrderStatus orderStatus; // WAIT_FOR_PAYMENT, PROCESSING, ON_DELIVERY, ARRIVED, CANCELLED
 
-    public Order(Customer customer, OrderItem[] orderItems) {
+    public Order(Customer customer, List<OrderItem> orderItems) {
         this.orderId = IdGenerator.generateId();
         this.customer = customer;
         this.orderItems = orderItems;
         this.grandTotal = initGrandTotal();
-        this.orderStatus = "WAIT_FOR_PAYMENT";
+        this.orderStatus = OrderStatus.WAIT_FOR_PAYMENT;
     }
 
     public double initGrandTotal() {
@@ -35,11 +35,11 @@ public class Order {
         this.customer = customer;
     }
 
-    public OrderItem[] getOrderItems() {
+    public List<OrderItem> getOrderItems() {
         return orderItems;
     }
 
-    public void setOrderItems(OrderItem[] orderItems) {
+    public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
     }
 
@@ -51,17 +51,17 @@ public class Order {
         this.grandTotal = grandTotal;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(String orderStatus) {
+    public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
     @Override
     public String toString() {
         return String.format("[%s] Customer: %s, Grand Total: %.2f, Status: %s",
-                orderId, customer.getName(), grandTotal, orderStatus);
+                orderId, customer.getName(), grandTotal, orderStatus.getMsg());
     }
 }

@@ -2,11 +2,11 @@ public class PhysicalProduct extends Product {
     private double weightInKg;
     private double weightCostPerKg;
 
-    public PhysicalProduct(String productName, String category, double basePrice, int stock) {
+    public PhysicalProduct(String productName, ProductCategory category, double basePrice, int stock) {
         super(productName, category, basePrice, stock);
     }
 
-    public PhysicalProduct(String productName, String category, double basePrice, int stock, double weightInKg, double weightCostPerKg) {
+    public PhysicalProduct(String productName, ProductCategory category, double basePrice, int stock, double weightInKg, double weightCostPerKg) {
         super(productName, category, basePrice, stock);
         this.weightInKg = weightInKg;
         this.weightCostPerKg = weightCostPerKg;

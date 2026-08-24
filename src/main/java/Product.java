@@ -1,11 +1,11 @@
 public abstract class Product {
     private final String productId;
     private String productName;
-    private String category;
+    private ProductCategory category;
     private double basePrice;
     private int stock;
 
-    public Product(String productName, String category, double basePrice, int stock) {
+    public Product(String productName, ProductCategory category, double basePrice, int stock) {
         this.productId = IdGenerator.generateId();
         this.productName = productName;
         this.category = category;
@@ -27,11 +27,11 @@ public abstract class Product {
         this.productName = productName;
     }
 
-    public String getCategory() {
+    public ProductCategory getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(ProductCategory category) {
         this.category = category;
     }
 
@@ -54,6 +54,6 @@ public abstract class Product {
     @Override
     public String toString() {
         return String.format("[%s] %s (%s): IDR %.2f (Stock: %d)",
-                productId, productName, category, basePrice, stock);
+                productId, productName, category.getDesc(), basePrice, stock);
     }
 }

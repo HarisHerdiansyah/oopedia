@@ -101,14 +101,7 @@ public class Main {
             return;
         }
 
-        String category = switch (categoryCode) {
-            case "1" -> "ELECTRONIC";
-            case "2" -> "FASHION";
-            case "3" -> "SOFTWARE";
-            case "4" -> "EBOOK";
-            default -> "UNKNOWN";
-        };
-
+        ProductCategory category = ProductCategory.fromCode(categoryCode);
         boolean isPhysicalProduct = categoryCode.equalsIgnoreCase("1") || categoryCode.equalsIgnoreCase("2");
         Product product = isPhysicalProduct ?
                 new PhysicalProduct(productName, category, basePrice, stock) :
@@ -141,11 +134,11 @@ public class Main {
     }
 
     private static void createOrder() {
-        OrderItem[] orderItems = new OrderItem[20];
-        int lastItemIndex = 0;
+        List<OrderItem> orderItems = new ArrayList<>();
         System.out.println("Create your order!");
 
-        while (lastItemIndex < 20) {
+        boolean cancel = false;
+        while (!cancel) {
             System.out.print("\nProduct ID: ");
             String productId = scanner.nextLine();
 
@@ -168,12 +161,10 @@ public class Main {
             }
 
             OrderItem orderItem = new OrderItem(product, quantity);
-            orderItems[lastItemIndex] = orderItem;
-            lastItemIndex += 1;
+            orderItems.add(orderItem);
 
             System.out.print("Submit another product? (Y/n): ");
-            boolean cancel = scanner.nextLine().equalsIgnoreCase("n");
-            if (cancel) break;
+            cancel = scanner.nextLine().equalsIgnoreCase("n");
         }
 
         Order order = new Order(verifiedCustomer, orderItems);
@@ -240,7 +231,7 @@ public class Main {
 
         double finalBalance = customerBalance - amountToPay;
         verifiedCustomer.setBalance(finalBalance);
-        order.setOrderStatus("PROCESSING");
+        order.setOrderStatus(OrderStatus.PROCESSING);
 
         System.out.println("Order successfully paid!");
         System.out.println(order);
@@ -277,14 +268,7 @@ public class Main {
             return;
         }
 
-        String orderStatus = switch (currentStatus) {
-            case "1" -> "ON_DELIVERY";
-            case "2" -> "ARRIVED";
-            case "3" -> "CANCELLED";
-            default -> "UNKNOWN";
-        };
-
-        order.setOrderStatus(orderStatus);
+        order.setOrderStatus(OrderStatus.fromCode(currentStatus));
         System.out.println("Order updated!");
         System.out.println(order);
     }
@@ -340,8 +324,8 @@ public class Main {
         // -------------- Mock Customer Data --------------
 
         // -------------- Mock Product Data --------------
-        PhysicalProduct product1 = new PhysicalProduct("Laptop", "ELECTRONIC", 4800000.0, 10, 1.6, 9000.0);
-        DigitalProduct product2 = new DigitalProduct("Windows 11", "SOFTWARE", 4800000.0, 10, "http://example.com", 4096, 9000.0);
+        PhysicalProduct product1 = new PhysicalProduct("Laptop", ProductCategory.ELECTRONIC, 4800000.0, 10, 1.6, 9000.0);
+        DigitalProduct product2 = new DigitalProduct("Windows 11", ProductCategory.SOFTWARE, 4800000.0, 10, "http://example.com", 4096, 9000.0);
         productService.save(product1);
         productService.save(product2);
         // -------------- Mock Product Data --------------
